@@ -199,10 +199,15 @@ NSString* const SocketIOException = @"SocketIOException";
 - (void) sendEvent:(NSString *)eventName withData:(id)data andAcknowledge:(SocketIOCallback)function
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:eventName forKey:@"name"];
-
     // do not require arguments
     if (data != nil) {
-        [dict setObject:[NSArray arrayWithObject:data] forKey:@"args"];
+        if ([data isKindOfClass:[NSArray class]]) {
+            // is array
+            [dict setObject:[NSArray arrayWithArray:data] forKey:@"args"];
+        } else {
+            // isn't array
+            [dict setObject:[NSArray arrayWithObject:data] forKey:@"args"];
+        }
     }
     
     SocketIOPacket *packet = [[SocketIOPacket alloc] initWithType:@"event"];
